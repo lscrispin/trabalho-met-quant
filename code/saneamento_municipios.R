@@ -9,7 +9,8 @@ dados <- get_sidra(api="/t/5938/n6/all/p/2021/v/37,498,513,517,6575,525") %>%
   select(
     `Valor`,
     `Município`,
-    `Variável`
+    `Variável`,
+    `Município (Código)`
   ) %>%
   pivot_wider(
     names_from = `Variável`,
@@ -25,18 +26,18 @@ dados <- get_sidra(api="/t/5938/n6/all/p/2021/v/37,498,513,517,6575,525") %>%
   left_join(
     get_sidra(api="/t/4709/n6/all/p/2022/v/93") %>%
       select(
-        `Município`,
-        `Valor`
+        `Valor`,
+        `Município (Código)`
       ),
-    by = "Município"
+    by = "Município (Código)"
   ) %>%
   rename(População = Valor) %>%
   left_join(
     get_sidra(api = "/t/6803/n6/all/p/2022/v/381/c1821/72129,72144") %>%
       select(
-        `Município`,
         `Valor`,
-        `Existência de ligação à rede geral de distribuição de água e principal forma de abastecimento de água`
+        `Existência de ligação à rede geral de distribuição de água e principal forma de abastecimento de água`,
+        `Município (Código)`
       ) %>%
       pivot_wider(
         names_from = `Existência de ligação à rede geral de distribuição de água e principal forma de abastecimento de água`,
@@ -44,14 +45,14 @@ dados <- get_sidra(api="/t/5938/n6/all/p/2021/v/37,498,513,517,6575,525") %>%
       ) %>%
       rename("Número de domicílios" = Total,
              "Domicílios água" = "Possui ligação à rede geral e a utiliza como forma principal"),
-    by = "Município"
+    by = "Município (Código)"
   ) %>%
   left_join(
     get_sidra(api = "/t/6805/n6/all/p/2022/v/381/c11558/72110,46292") %>%
       select(
-        `Município`,
         `Valor`,
-        `Tipo de esgotamento sanitário`
+        `Tipo de esgotamento sanitário`,
+        `Município (Código)`
       ) %>%
       pivot_wider(
         names_from = `Tipo de esgotamento sanitário`,
@@ -59,14 +60,14 @@ dados <- get_sidra(api="/t/5938/n6/all/p/2021/v/37,498,513,517,6575,525") %>%
       ) %>%
       rename("Domicílios esgotamento" = "Rede geral ou pluvial",
              "TotalEsg" = Total),
-    by = "Município"
+    by = "Município (Código)"
   ) %>%
   left_join(
     get_sidra(api = "/t/6892/n6/all/p/2022/v/381/c67/2520,10972") %>%
       select(
-        `Município`,
         `Valor`,
-        `Destino do lixo`
+        `Destino do lixo`,
+        `Município (Código)`
       ) %>%
       pivot_wider(
         names_from = `Destino do lixo`,
@@ -74,7 +75,7 @@ dados <- get_sidra(api="/t/5938/n6/all/p/2021/v/37,498,513,517,6575,525") %>%
       ) %>%
       rename("Domicílios lixo" = Coletado,
              "TotalLixo" = Total),
-    by = "Município"
+    by = "Município (Código)"
   ) %>%
   mutate(
     UF = substr(`Município`, nchar(`Município`) - 1, nchar(`Município`)),
